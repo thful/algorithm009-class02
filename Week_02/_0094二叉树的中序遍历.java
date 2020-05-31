@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Stack;
 
 /**
- * 给定一个二叉树，返回它的 前序 遍历。
+ * 给定一个二叉树，返回它的中序 遍历。
  * <p>
  * 示例:
  * 输入: [1,null,2,3]
@@ -17,71 +17,57 @@ import java.util.Stack;
  * /
  * 3
  * <p>
- * 输出: [1,2,3]
+ * 输出: [1,3,2]
+ * <p>
  * 进阶: 递归算法很简单，你可以通过迭代算法完成吗？
  * <p>
- * 公司：谷歌、微软、字节跳动在半年内面试中考过
+ * 公司：亚马逊、微软、字节跳动在半年内面试中考过
  * <p>
- * 链接：https://leetcode-cn.com/problems/binary-tree-preorder-traversal
+ * 链接：https://leetcode-cn.com/problems/binary-tree-inorder-traversal
  */
-public class _0144二叉树的前序遍历 {
-    public static void main(String[] args) {
-
-    }
-
+public class _0094二叉树的中序遍历 {
     /**
      * 解题思路：
      * 1.走递归 使用一个数组存储节点值
-     * 2.先把根节点加入数组 然后递归左子树与右子树 即进行前序遍历
+     * 2.先把左节点进行递归 然后添加节点值加入数组 最后把右节点进行中序递归
      * <p>
      * 时间复杂度：O(n) 每个节点都要访问一次
      * 空间复杂度：O(n) 有可能此二叉树的高度 和 节点的数量 一致
      */
     private List<Integer> list = new ArrayList<>();
 
-    //    public List<Integer> preorderTraversal(TreeNode root) {
-//        List<Integer> list = new ArrayList<Integer>();
-//        // 前序遍历 = 根 左 右
-//        preorderTraversal(root, list);
-//        return list;
-//    }
-    public List<Integer> preorderTraversal(TreeNode root) {
-        if (root == null) return null;
-        // 根
+    public List<Integer> inorderTraversal(TreeNode root) {
+        if (root == null) return list;
+        // 中序遍历 ：左-根-右
+        inorderTraversal(root.left);
         list.add(root.val);
-        // 左
-        preorderTraversal(root.left);
-        // 右
-        preorderTraversal(root.right);
+        inorderTraversal(root.right);
         return list;
     }
 
     /**
      * 解题思路：
      * 1.可以用栈代替递归
-     * 2.每次先把根节点压入栈内
-     * 3.循环栈 只要不为空就一直循环
-     * 4.循环内弹出栈顶元素给返回结果
-     * 5.由于栈是前进后出 所以每次要先把右节点压栈再压左节点 根-左-右
+     * 2.节点变更指针的思路
      * <p>
      * 时间复杂度：O(n) 每个节点都要访问
      * 空间复杂度：O(n) 二叉树的所有节点
      */
-    public List<Integer> preorderTraversal2(TreeNode root) {
+    public List<Integer> inorderTraversal2(TreeNode root) {
         List<Integer> list = new ArrayList<>();
-        if (root == null) return list;
-        Stack<TreeNode> stack = new Stack<TreeNode>();
-        stack.push(root);
-        while (!stack.isEmpty()) {
-            TreeNode node = stack.pop();
-            list.add(node.val);
-            TreeNode left = node.left, right = node.right;
-            if (right != null) {
-                stack.push(right);
+        Stack<TreeNode> stack = new Stack<>();
+        // 一开始设置为当前节点
+        TreeNode curr = root;
+        while (curr != null || !stack.isEmpty()) {
+            while (curr != null) {
+                stack.push(curr);
+                // 把当前节点设置为左节点
+                curr = curr.left;
             }
-            if (left != null) {
-                stack.push(left);
-            }
+            curr = stack.pop();
+            // 添加根节点的值
+            list.add(curr.val);
+            curr = curr.right;
         }
         return list;
     }
@@ -102,17 +88,17 @@ public class _0144二叉树的前序遍历 {
      * 2.如果遇到的节点为白色 则将其标记为灰色 然后将右子节点、自身、左子节点依次入栈
      * 3.如果遇到灰色的节点 则输出节点的值
      */
-    public List<Integer> preorderTraversal3(TreeNode root) {
+    public List<Integer> inorderTraversal3(TreeNode root) {
         List<Integer> list = new ArrayList<>();
         if (root == null) return list;
         Stack<ColorNode> stack = new Stack<>();
         stack.push(new ColorNode(root, "white"));
         while (!stack.isEmpty()) {
-           ColorNode color = stack.pop();
+            ColorNode color = stack.pop();
             if (color.color.equals("white")) {
                 if (color.node.right != null) stack.push(new ColorNode(color.node.right, "white"));
-                if (color.node.left != null) stack.push(new ColorNode(color.node.left, "white"));
                 stack.push(new ColorNode(color.node, "gray"));
+                if (color.node.left != null) stack.push(new ColorNode(color.node.left, "white"));
 
             } else {
                 list.add(color.node.val);
