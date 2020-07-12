@@ -10,6 +10,11 @@
 |  按位与 |  `&` | 0011 & 1011 `-->` 0011  |
 |  按位取反 | `~`  | 0011 `-->` 1100  |
 |  按位异步(相同为0不同为1) | `^`  |  0011 & 1011 `-->` 1000 |
+> - 请注意：算术移位和逻辑移位的不同 
+> - `https://www.cnblogs.com/hpcpp/p/6291710.html`
+> - `https://blog.csdn.net/xzg_2017/article/details/80158215`
+> - 一句话总结：算术左移和逻辑左移的效果是一样的 效果都是*2 而逻辑右移最高位补0 算术右移最高位补符号位
+
 
 ### 异或
 > - 相同为0 不同为1
@@ -110,12 +115,66 @@ a ^ b ^ c = a ^ (b ^ c) = (a ^ b) ^ c
 ## 初级排序
 ### 选择排序 Selection Sort
 >   - 每次找最小值 然后放到待排序数组的起始位置
+```java
+public void selectionSort(int[] nums) {
+	int length = nums.length;
+	for (int i = 0; i < length - 1; i++) {
+		int min = nums[i];
+		int minindex = i;
+		for (int j = i + 1; j < length; j++) {
+			if (min > nums[j]) {
+				min = nums[j];
+				minindex = j;
+			}
+		}
+		if (minindex != i) {
+			nums[minindex] = nums[i];
+			nums[i] = min;
+		}
+	}
+}
+```
 
 ### 插入排序 Insertion Sort
 >   - 从前到后逐步构建有序序列 对于未排序数据 在已排序序列中从后向前扫描 找到相应位置并插入
+```java
+public void insertionSort(int[] nums) {
+	int length = nums.length;
+	for (int i = 1; i < length; i++) {
+		int num = nums[i];
+		int insert = 0;
+		for (int j = i - 1; j >= 0; j--) {
+			if (nums[j] > num) {
+				nums[j + 1] = nums[j];
+			} else {
+				insert = j + 1;
+				break;
+			}
+		}
+		nums[insert] = num;
+	}
+}
+```
 
 ### 冒泡排序 Bubble Sort
 >   - 嵌套循环 每次查看相邻的元素 如果逆序就交换 与选择排序不同 每次循环会把最大值放到最后
+```java
+public void bubbleSort(int[] nums) {
+	int length = nums.length;
+	boolean need = true;
+	for (int i = 1; i < length && need; i++) {
+		need = false;
+		for (int j = 0; j < length - i; j++) {
+			if (nums[j] > nums[j + 1]) {
+				int temp = nums[j];
+				nums[j] = nums[j + 1];
+				nums[j + 1] = temp;
+				need = true;
+			}
+		}
+	}
+}
+```
 
 ## 高级排序
 ### 快速排序 Quick Sort
